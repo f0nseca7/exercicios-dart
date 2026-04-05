@@ -8,62 +8,97 @@ void main() {
   ];
 
   String jogadorAtual = 'X';
-  int qntdJogadas = 0;
-  bool vitoria = false;
+  bool venceu = false;
+  int jogadas = 0;
 
-  while (qntdJogadas < 9 && !vitoria) {
-    print("\nTabuleiro:");
-    mostrarTabuleiro(tabuleiro);
-
-    print(
-      "\nJogador $jogadorAtual, informe a linha e a coluna que deseja marcar(0 a 2):",
-    );
-
-    int linha = int.parse(stdin.readLineSync()!);
-    int coluna = int.parse(stdin.readLineSync()!);
-
-    if (tabuleiro[linha][coluna] == ' ') {
-      tabuleiro[linha][coluna] = jogadorAtual;
-      qntdJogadas++;
-
-      if (verificarVitoria(tabuleiro, jogadorAtual)) {
-        print("\nTabuleiro final:");
-        mostrarTabuleiro(tabuleiro);
-        print("\nJogador $jogadorAtual venceu!");
-        vitoria = true;
-      } else {
-        jogadorAtual = (jogadorAtual == 'X') ? 'O' : 'X';
+  void exibirTabuleiro() {
+    print('\n    0   1   2 (colunas)');
+    for (var i = 0; i < 3; i++) {
+      print('$i   ${tabuleiro[i][0]} | ${tabuleiro[i][1]} | ${tabuleiro[i][2]}');
+      if (i < 2) {
+        print('   -----------');
       }
+    }
+    print('(linhas)\n');
+  }
+
+  bool analisarVitoria(String jogador) {
+    for (var i = 0; i < 3; i++) {
+      if (tabuleiro[i][0] == jogador &&
+          tabuleiro[i][1] == jogador &&
+          tabuleiro[i][2] == jogador) {
+        return true;
+      }
+    }
+
+    for (var j = 0; j < 3; j++) {
+      if (tabuleiro[0][j] == jogador &&
+          tabuleiro[1][j] == jogador &&
+          tabuleiro[2][j] == jogador) {
+        return true;
+      }
+    }
+
+    if (tabuleiro[0][0] == jogador &&
+        tabuleiro[1][1] == jogador &&
+        tabuleiro[2][2] == jogador) {
+      return true;
+    }
+
+    if (tabuleiro[0][2] == jogador &&
+        tabuleiro[1][1] == jogador &&
+        tabuleiro[2][0] == jogador) {
+      return true;
+    }
+
+    return false;
+  }
+
+  while (!venceu && jogadas < 9) {
+    exibirTabuleiro();
+
+    print('Jogador $jogadorAtual, digite a linha (0, 1 ou 2):');
+    String? linhaInput = stdin.readLineSync();
+
+    print('Jogador $jogadorAtual, digite a coluna (0, 1 ou 2):');
+    String? colunaInput = stdin.readLineSync();
+
+    int? linha = int.tryParse(linhaInput ?? '');
+    int? coluna = int.tryParse(colunaInput ?? '');
+
+    if (linha == null || coluna == null) {
+      print('Entrada inválida. Digite apenas números entre 0 e 2.');
+      continue;
+    }
+
+    if (linha < 0 || linha > 2 || coluna < 0 || coluna > 2) {
+      print('Posição inválida. Escolha linha e coluna entre 0 e 2.');
+      continue;
+    }
+
+    if (tabuleiro[linha][coluna] != ' ') {
+      print('Essa posição já está ocupada. Tente novamente.');
+      continue;
+    }
+
+    tabuleiro[linha][coluna] = jogadorAtual;
+    jogadas++;
+
+    if (analisarVitoria(jogadorAtual)) {
+      exibirTabuleiro();
+      print('Jogador $jogadorAtual venceu!');
+      venceu = true;
     } else {
-      print("Essa posição já foi marcada, tente novamente.");
+      if (jogadorAtual == 'X') {
+        jogadorAtual = 'O';
+      } else {
+        jogadorAtual = 'X';
+      }
     }
   }
 
-  if (!vitoria) {
-    print("\nTabuleiro final:");
-    mostrarTabuleiro(tabuleiro);
-    print("\nDeu velha.");
+  if (!venceu) {
+    exibirTabuleiro();
+    print('Empate! O tabuleiro foi preenchido sem vencedor.');
   }
-}
-
-void mostrarTabuleiro(List<List<String>> t) {
-  for (int i = 0; i < 3; i++) {
-    print(" ${t[i][0]} | ${t[i][1]} | ${t[i][2]} ");
-    if (i < 2) print("---|---|---");
-  }
-}
-
-bool verificarVitoria(List<List<String>> t, String j) {
-  for (int i = 0; i < 3; i++) {
-    if (t[i][0] == j && t[i][1] == j && t[i][2] == j) return true;
-  }
-
-  for (int i = 0; i < 3; i++) {
-    if (t[0][i] == j && t[1][i] == j && t[2][i] == j) return true;
-  }
-
-  if (t[0][0] == j && t[1][1] == j && t[2][2] == j) return true;
-  if (t[0][2] == j && t[1][1] == j && t[2][0] == j) return true;
-
-  return false;
 }
