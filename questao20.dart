@@ -4,60 +4,69 @@ void main() {
   List<List<String>> labirinto = [
     ['#', '#', '#', '#', '#', '#', '#'],
     ['#', 'E', ' ', ' ', '#', ' ', '#'],
-    ['#', ' ', '#', ' ', '#', ' ', '#'],
-    ['#', ' ', '#', ' ', ' ', ' ', '#'],
-    ['#', ' ', ' ', '#', '#', ' ', '#'],
-    ['#', '#', ' ', ' ', ' ', 'S', '#'],
+    ['#', '#', ' ', '#', '#', ' ', '#'],
+    ['#', ' ', ' ', ' ', ' ', ' ', '#'],
+    ['#', ' ', '#', '#', '#', ' ', '#'],
+    ['#', ' ', ' ', ' ', '#', 'S', '#'],
     ['#', '#', '#', '#', '#', '#', '#'],
   ];
 
-  int x = 1;
-  int y = 1;
+  int linhaJogador = 1;
+  int colunaJogador = 1;
+  bool venceu = false;
 
-  stdin.echoMode = false;
-  stdin.lineMode = false;
+  labirinto[linhaJogador][colunaJogador] = 'J';
 
-  while (true) {
-    limparTela();
-    mostrarLabirinto(labirinto, x, y);
-
-    int tecla = stdin.readByteSync();
-
-    int novoX = x;
-    int novoY = y;
-
-    if (tecla == 119) novoX--; // W
-    if (tecla == 115) novoX++; // S
-    if (tecla == 97) novoY--; // A
-    if (tecla == 100) novoY++; // D
-
-    if (labirinto[novoX][novoY] != '#') {
-      x = novoX;
-      y = novoY;
-    }
-
-    if (labirinto[x][y] == 'S') {
-      limparTela();
-      mostrarLabirinto(labirinto, x, y);
-      print("\nSaída encontrada.");
-      break;
-    }
-  }
-}
-
-void mostrarLabirinto(List<List<String>> labirinto, int px, int py) {
-  for (int i = 0; i < labirinto.length; i++) {
-    for (int j = 0; j < labirinto[i].length; j++) {
-      if (i == px && j == py) {
-        stdout.write('P ');
-      } else {
-        stdout.write('${labirinto[i][j]} ');
-      }
+  void exibirLabirinto() {
+    print('\nLabirinto:');
+    for (var i = 0; i < labirinto.length; i++) {
+      print(labirinto[i].join(' '));
     }
     print('');
   }
-}
 
-void limparTela() {
-  print("\x1B[2J\x1B[0;0H");
+  while (!venceu) {
+    exibirLabirinto();
+
+    print('Digite um comando para mover o jogador:');
+    print('w = cima | s = baixo | a = esquerda | d = direita');
+    String? comando = stdin.readLineSync();
+
+    int novaLinha = linhaJogador;
+    int novaColuna = colunaJogador;
+
+    if (comando == 'w') {
+      novaLinha--;
+    } else if (comando == 's') {
+      novaLinha++;
+    } else if (comando == 'a') {
+      novaColuna--;
+    } else if (comando == 'd') {
+      novaColuna++;
+    } else {
+      print('Comando inválido.');
+      continue;
+    }
+
+    if (labirinto[novaLinha][novaColuna] == '#') {
+      print('Movimento bloqueado por obstáculo.');
+      continue;
+    }
+
+    if (labirinto[novaLinha][novaColuna] == 'S') {
+      labirinto[linhaJogador][colunaJogador] = ' ';
+      linhaJogador = novaLinha;
+      colunaJogador = novaColuna;
+      labirinto[linhaJogador][colunaJogador] = 'J';
+      exibirLabirinto();
+      print('Parabéns! Você chegou à saída do labirinto.');
+      venceu = true;
+      break;
+    }
+
+    labirinto[linhaJogador][colunaJogador] = ' ';
+    linhaJogador = novaLinha;
+    colunaJogador = novaColuna;
+    labirinto[linhaJogador][colunaJogador] = 'J';
+  }
 }
