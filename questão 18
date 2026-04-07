@@ -1,0 +1,83 @@
+import 'dart:io';
+import 'dart:math';
+
+void main() {
+  List<String> palavras = ["PROGRAMACAO", "FLUTTER", "DART", "ALGORITMO", "VETOR", "DESENVOLVIMENTO"];
+  String palavraOculta = palavras[Random().nextInt(palavras.length)];
+  List<String> letrasAdivinhadas = [];
+  int erros = 0;
+  int maxErros = 6;
+
+  print("--- Jogo da Forca em Dart ---");
+
+  while (erros < maxErros) {
+    exibirForca(erros);
+    String exibicao = "";
+    bool ganhou = true;
+
+    for (int i = 0; i < palavraOculta.length; i++) {
+      String letra = palavraOculta[i];
+      if (letrasAdivinhadas.contains(letra)) {
+        exibicao += "$letra ";
+      } else {
+        exibicao += "_ ";
+        ganhou = false;
+      }
+    }
+
+    print("\nPalavra: $exibicao");
+    print("Letras tentadas: ${letrasAdivinhadas.join(', ')}");
+
+    if (ganhou) {
+      print("\nParabéns! Você ganhou!");
+      return;
+    }
+
+    stdout.write("Digite uma letra: ");
+    String? entrada = stdin.readLineSync()?.toUpperCase();
+
+    if (entrada == null || entrada.isEmpty || entrada.length > 1) {
+      print("Por favor, digite apenas uma letra.");
+      continue;
+    }
+
+    if (letrasAdivinhadas.contains(entrada)) {
+      print("Você já tentou essa letra!");
+      continue;
+    }
+
+    letrasAdivinhadas.add(entrada);
+
+    if (!palavraOculta.contains(entrada)) {
+      erros++;
+      print("Errou! A letra '$entrada' não está na palavra.");
+    } else {
+      print("Acertou! A letra '$entrada' faz parte da palavra.");
+    }
+  }
+
+  exibirForca(erros);
+  print("\nGame Over! O boneco foi concluído.");
+  print("A palavra era: $palavraOculta");
+}
+
+void exibirForca(int erros) {
+  List<String> forca = [
+    "  +---+",
+    "  |   |",
+    "      |",
+    "      |",
+    "      |",
+    "      |",
+    "========="
+  ];
+
+  if (erros >= 1) forca[2] = "  O   |";
+  if (erros >= 2) forca[3] = "  |   |";
+  if (erros >= 3) forca[3] = " /|   |";
+  if (erros >= 4) forca[3] = " /|\\  |";
+  if (erros >= 5) forca[4] = " /    |";
+  if (erros >= 6) forca[4] = " / \\  |";
+
+  print("\n" + forca.join("\n"));
+}
