@@ -1,0 +1,28 @@
+def ler_vetor(nome):
+    tamanho = int(input(f"Digite o tamanho do {nome}: "))
+    vetor = []
+    for i in range(tamanho):
+        elemento = float(input(f"Digite o elemento {i+1} do {nome}: "))
+        vetor.append(elemento)
+    return vetor
+
+def somar_vetores(v1, v2):
+    # Garantir que os vetores tenham o mesmo tamanho para somar elemento a elemento
+    # Se não tiverem, somamos até o menor tamanho
+    tamanho_minimo = min(len(v1), len(v2))
+    v3 = []
+    for i in range(tamanho_minimo):
+        v3.append(v1[i] + v2[i])
+    return v3
+
+def exercicio_17():
+    print("--- Exercício 17 ---")
+    v1 = ler_vetor("1º Vetor")
+    v2 = ler_vetor("2º Vetor")
+    
+    v3 = somar_vetores(v1, v2)
+    
+    print(f"\n3º Vetor (soma dos dois vetores): {v3}")
+    soma_total = sum(v3)
+    print(f"Soma de todos os elementos do 3º vetor: {soma_total}")
+
