@@ -7,8 +7,6 @@ def ler_vetor(nome):
     return vetor
 
 def somar_vetores(v1, v2):
-    # Garantir que os vetores tenham o mesmo tamanho para somar elemento a elemento
-    # Se não tiverem, somamos até o menor tamanho
     tamanho_minimo = min(len(v1), len(v2))
     v3 = []
     for i in range(tamanho_minimo):
